@@ -16,21 +16,22 @@ RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
     /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh
 
-RUN apt-get install -y curl grep sed dpkg && \
+RUN apt-get install -y curl grep sed dpkg build-essential && \
     TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
     curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \
     dpkg -i tini.deb && \
     rm tini.deb && \
     apt-get clean
 
+
+RUN mkdir -p ~/github && cd ~/github && git clone http://github.com/claytonblythe/deepython.git && git clone http://github.com/claytonblythe/elegantdp.git && git clone http://github.com/claytonblythe/dotfiles.git
+
 ENV PATH /opt/conda/bin:$PATH
 
+RUN pip install jupyter pelican markdown
+
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
-ADD .bashrc /.bashrc
-ADD .bash_profile /.bash_profile
-ADD .aliases /.aliases
-RUN cat .bashrc >> /root/.bashrc && cat .bash_profile >> /root/.bash_profile && cat .aliases >> /root/.aliases
+RUN cat ~/github/dotfiles/linux/bashrc >> /root/.bashrc && cat ~/github/dotfiles/linux/bash_profile >> /root/.bash_profile && cat ~/github/dotfiles/linux/aliases >> /root/.aliases
 
 CMD [ "/bin/bash" ]
 
-RUN pip install jupyter
