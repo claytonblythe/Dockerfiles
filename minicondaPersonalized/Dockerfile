@@ -32,9 +32,7 @@ RUN pip install jupyter pelican markdown
 
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
 
-RUN cat ~/github/dotfiles/linux/bashrc >> /root/.bashrc && cat ~/github/dotfiles/linux/bash_profile >> /root/.bash_profile && cat ~/github/dotfiles/linux/aliases >> /root/.aliases
-
-RUN sh ~/.vim_runtime/install_awesome_vimrc.sh
+RUN cat ~/github/dotfiles/linux/bashrc >> /root/.bashrc && cat ~/github/dotfiles/linux/bash_profile >> /root/.bash_profile && cat ~/github/dotfiles/linux/aliases >> /root/.aliases && sh ~/.vim_runtime/install_awesome_vimrc.sh && git config --global user.email "blythec1@central.edu" && git config --global user.name "Clayton Blythe"
 
 CMD [ "/bin/bash" ]
 
