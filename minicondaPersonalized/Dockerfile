@@ -24,14 +24,17 @@ RUN apt-get install -y curl grep sed dpkg build-essential && \
     apt-get clean
 
 
-RUN mkdir -p ~/github && cd ~/github && git clone http://github.com/claytonblythe/deepython.git && git clone http://github.com/claytonblythe/elegantdp.git && git clone http://github.com/claytonblythe/dotfiles.git
+RUN mkdir -p ~/github && cd ~/github && git clone http://github.com/claytonblythe/deepython.git && git clone http://github.com/claytonblythe/elegantdp.git && git clone http://github.com/claytonblythe/dotfiles.git && git clone --depth=1 http://github.com/claytonblythe/vimrc.git ~/.vim_runtime
 
 ENV PATH /opt/conda/bin:$PATH
 
 RUN pip install jupyter pelican markdown
 
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
+
 RUN cat ~/github/dotfiles/linux/bashrc >> /root/.bashrc && cat ~/github/dotfiles/linux/bash_profile >> /root/.bash_profile && cat ~/github/dotfiles/linux/aliases >> /root/.aliases
+
+RUN sh ~/.vim_runtime/install_awesome_vimrc.sh
 
 CMD [ "/bin/bash" ]
 
