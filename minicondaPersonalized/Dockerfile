@@ -24,7 +24,7 @@ RUN apt-get install -y curl grep sed dpkg build-essential && \
     apt-get clean
 
 
-RUN mkdir -p ~/github && cd ~/github && git clone http://github.com/claytonblythe/deepython.git && git clone http://github.com/claytonblythe/elegantdp.git && git clone http://github.com/claytonblythe/dotfiles.git && git clone --depth=1 http://github.com/claytonblythe/vimrc.git ~/.vim_runtime
+RUN mkdir -p ~/github && cd ~/github && git clone http://github.com/claytonblythe/deepython.git && git clone http://github.com/claytonblythe/elegantdp.git && git clone http://github.com/claytonblythe/version_control.git && git clone http://github.com/claytonblythe/dotfiles.git && git clone --depth=1 http://github.com/claytonblythe/vimrc.git ~/.vim_runtime
 
 ENV PATH /opt/conda/bin:$PATH
 
