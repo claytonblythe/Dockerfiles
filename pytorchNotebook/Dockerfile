@@ -63,8 +63,22 @@ RUN mkdir -p /home/$DEFAULT_USER/notebooks
 VOLUME /home/$DEFAULT_USER/notebooks/
 WORKDIR /home/$DEFAULT_USER
 
+# Make github directory and clone relevant repos
+RUN mkdir -p ~/github && cd ~/github && git clone http://github.com/claytonblythe/pytorchNotebooks.git && git clone http://github.com/claytonblythe/deepython.git && git clone http://github.com/claytonblythe/elegantdp.git && git clone http://github.com/claytonblythe/version_control.git && git clone http://github.com/claytonblythe/dotfiles.git && git clone --depth=1 http://github.com/claytonblythe/vimrc.git ~/.vim_runtime
+
+## Change to root
+USER root
+
+# Personalize bashrc and other dotfiles, git configuration
+RUN cat ~/github/dotfiles/macbook/bashrc >> /home/$DEFAULT_USER/.bashrc && cat ~/github/dotfiles/macbook/bash_profile >> /home/$DEFAULT_USER/.bash_profile && cat ~/github/dotfiles/macbook/aliases >> /home/$DEFAULT_USER/.aliases && sh ~/.vim_runtime/install_awesome_vimrc.sh && git config --global user.email "blythec1@central.edu" && git config --global user.name "Clayton Blythe"
+
+# Change back to default user 
+
 # Get Sony tutorial directory 
 RUN git clone https://github.com/pytorch/examples.git
+
+# Start container session with default user and default home directory
+USER $DEFAULT_USER
 
 # run jupyter notebook
 CMD jupyter notebook --no-browser --ip=0.0.0.0 --NotebookApp.token='hellofriend'
