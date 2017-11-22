@@ -5,6 +5,12 @@ MAINTAINER Clayton Blythe <claytondblythe@gmail.com>
 ARG TENSORFLOW_ARCH=gpu
 ARG TORCH_VERSION=latest
 
+## Set up environment variables
+ENV DEFAULT_USER cblythe2
+ENV HOME /home/$DEFAULT_USER
+ENV CONDA /opt/conda
+ENV PATH $CONDA/bin:$PATH
+EXPOSE 8097
 ENV http_proxy="http://19.12.1.40:83"
 ENV https_proxy="https://19.12.1.40:83"
 
@@ -30,13 +36,6 @@ RUN apt-get update && apt-get install -y \
 		doxygen \
 		python-pip \
 		python3-pip
-
-## Set up environment variables
-ENV DEFAULT_USER cblythe2
-ENV HOME /home/$DEFAULT_USER
-ENV CONDA /opt/conda
-ENV PATH $CONDA/bin:$PATH
-EXPOSE 8097
 
 ## Create default user and home directory
 RUN useradd --create-home --home-dir /home/$DEFAULT_USER --shell /bin/bash $DEFAULT_USER && \
@@ -87,6 +86,8 @@ RUN pip3 install torchvision
 # Install OpenCV
 RUN pip3 install opencv-python
 
+USER $DEFAULT_USER
+
 # Install MINICONDA3 AS USER
 RUN cd /tmp && \
     mkdir -p $CONDA && \
@@ -99,12 +100,11 @@ RUN cd /tmp && \
     conda clean -tipsy
 
 # Make github directory and clone relevant repos
-RUN mkdir -p ~/github && cd ~/github && git clone https://github.com/claytonblythe/version_control.git && git clone http://github.com/claytonblythe/dotfiles.git && git clone --depth=1 http://github.com/claytonblythe/vimrc.git ~/.vim_runtime && git clone https://github.com/claytonblythe/dockerfiles.git
+RUN mkdir -p ~/github && mkdir ~/data && cd ~/github && git clone https://github.com/claytonblythe/version_control.git && git clone http://github.com/claytonblythe/dotfiles.git && git clone --depth=1 http://github.com/claytonblythe/vimrc.git ~/.vim_runtime && git clone https://github.com/claytonblythe/dockerfiles.git
 
 # Personalize bashrc and other dotfiles, git configuration
 RUN cat ~/github/dotfiles/macbook/bashrc >> /home/$DEFAULT_USER/.bashrc && cat ~/github/dotfiles/macbook/bash_profile >> /home/$DEFAULT_USER/.bash_profile && cat ~/github/dotfiles/macbook/aliases >> /home/$DEFAULT_USER/.aliases && sh ~/.vim_runtime/install_awesome_vimrc.sh && git config --global user.email "blythec1@central.edu" && git config --global user.name "Clayton Blythe"
 
 # Expose Ports for TensorBoard (6006), Ipython (8888)
 EXPOSE 6006 8888
-
 CMD ["/bin/bash"]
