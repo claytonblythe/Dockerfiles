@@ -38,7 +38,6 @@ USER $DEFAULT_USER
 RUN cd /tmp && \
     mkdir -p $CONDA && \
     wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    echo "c1c15d3baba15bf50293ae963abef853 *Miniconda3-latest-Linux-x86_64.sh" | md5sum -c - && \
     /bin/bash Miniconda3-latest-Linux-x86_64.sh -f -b -p $CONDA && \
     rm Miniconda3-latest-Linux-x86_64.sh && \
     $CONDA/bin/conda config --system --add channels conda-forge && \
