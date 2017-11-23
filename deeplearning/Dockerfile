@@ -4,11 +4,6 @@ ENV PATH /opt/conda/envs/pytorch-py35/bin:$PATH
 ## Setup for running behind proxy
 ENV http_proxy="http://19.12.1.40:83"
 ENV https_proxy="https://19.12.1.40:83"
-ENV DEFAULT_USER cblythe2
-
-## Create default user and home directory
-RUN useradd --create-home --home-dir /home/$DEFAULT_USER --shell /bin/bash $DEFAULT_USER && \
-    adduser $DEFAULT_USER sudo 
 
 # This pulls in a whole bunch of crap, python2.7!? how to improve?
 RUN apt-get update -qq && apt-get install -y --no-install-recommends \
@@ -25,6 +20,7 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
     libgtk2.0-dev \
     libv4l-dev \
     libtbb-dev \
+    protobuf-compiler \ 
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN git clone --branch 3.2.0 --depth 1 https://github.com/opencv/opencv.git /workspace/opencv && \
@@ -45,20 +41,14 @@ RUN git clone --branch 3.2.0 --depth 1 https://github.com/opencv/opencv.git /wor
     ldconfig && \
     cd /workspace && \
     rm -rf /workspace/opencv
-
-RUN conda install -c conda-forge jupyterlab tqdm tensorflow-gpu
-
-USER $DEFAULT_USER
-
-# Create a shared volume for notebooks, scripts and data
-RUN mkdir -p /home/$DEFAULT_USER
+    
+RUN pip install tensorflow-gpu
+ENV DEFAULT_USER claytonblythe
+RUN useradd --create-home --home-dir /home/$DEFAULT_USER --shell /bin/bash $DEFAULT_USER && adduser $DEFAULT_USER sudo
 WORKDIR /home/$DEFAULT_USER
+USER $DEFAULT_USER
+RUN mkdir -p ~/github/ && cd ~/github && git clone --depth=1 http://github.com/claytonblythe/dotfiles.git && git clone http://github.com/claytonblythe/vimrc.git ~/.vim_runtime
+RUN cat ~/github/dotfiles/macbook/bashrc >> /home/$DEFAULT_USER/.bashrc && cat ~/github/dotfiles/macbook/bash_profile >> /home/$DEFAULT_USER/.bash_profile && \
+    cat ~/github/dotfiles/macbook/aliases >> /home/$DEFAULT_USER/.aliases
 
-# Make github directory and clone relevant repos
-RUN mkdir -p ~/github && cd ~/github && git clone http://github.com/claytonblythe/version_control.git && git clone http://github.com/claytonblythe/dotfiles.git && git clone --depth=1 http://github.com/claytonblythe/vimrc.git ~/.vim_runtime && git clone http://github.com/claytonblythe/dockerfiles.git && git clone --depth=1 http://github.com/tensorflow/models.git 
 
-
-# Personalize bashrc and other dotfiles, git configuration
-RUN cat ~/github/dotfiles/macbook/bashrc >> /home/$DEFAULT_USER/.bashrc && cat ~/github/dotfiles/macbook/bash_profile >> /home/$DEFAULT_USER/.bash_profile && cat ~/github/dotfiles/macbook/aliases >> /home/$DEFAULT_USER/.aliases && sh ~/.vim_runtime/install_awesome_vimrc.sh && git config --global user.email "blythec1@central.edu" && git config --global user.name "Clayton Blythe"
-
-EXPOSE 8097 8888
