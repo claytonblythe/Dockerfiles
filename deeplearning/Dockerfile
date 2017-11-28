@@ -7,6 +7,7 @@ ENV https_proxy="https://19.12.1.40:83"
 
 # This pulls in a whole bunch of crap, python2.7!? how to improve?
 RUN apt-get update -qq && apt-get install -y --no-install-recommends \
+    ffmpeg \ 
     libtiff5-dev \
     libpng-dev \
     libjpeg-dev \
