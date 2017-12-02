@@ -1,6 +1,9 @@
 FROM rwightman/pytorch-extra:latest
 
 ENV PATH /opt/conda/envs/pytorch-py35/bin:$PATH
+## Setup for running behind proxy
+ENV http_proxy="http://19.12.1.40:83"
+ENV https_proxy="https://19.12.1.40:83"
 
 # This pulls in a whole bunch of crap, python2.7!? how to improve?
 RUN apt-get update -qq && apt-get install -y --no-install-recommends \
